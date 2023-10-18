@@ -1,0 +1,110 @@
+/* Estilos generales para Dark Mode */
+body {
+    background-color: #1c1e26; /* Fondo oscuro */
+    color: #fff; /* Texto en blanco */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna */
+    font-size: 16px; /* Tamaño de fuente predeterminado */
+}
+
+.container {
+    background-color: #272a3d; /* Fondo del contenido en gris oscuro */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Sutil sombra */
+    padding: 20px; /* Espaciado interior */
+}
+
+h1, h2 {
+    color: #4a90e2; /* Azul pastel para títulos */
+}
+
+/* Estilos de encabezado para Dark Mode */
+header {
+    background-color: #1c1e26; /* Fondo oscuro */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    color: #4a90e2;
+    /* padding: 5%; */
+}
+
+/* Estilos del navbar para Dark Mode */
+.navbar {
+    background-color: #1c1e26; /* Fondo oscuro */
+    min-height: 60px; /* Altura mínima del navbar */
+    padding: 10px; /* Espaciado interior */
+}
+
+/* Estilos del título principal en el navbar */
+.navbar h1 {
+    color: #9b59b6; /* Morado pastel para el título principal */
+    font-size: 24px; /* Tamaño de fuente más grande */
+}
+
+/* Estilos de los elementos de navegación en el navbar */
+.navbar-nav .nav-link {
+    color: #fff; /* Texto en blanco */
+    padding: 10px 15px; /* Espaciado interior horizontal */
+    font-size: 16px; /* Tamaño de fuente para elementos de navegación */
+}
+
+/* Estilos del icono de alternar del navbar */
+.navbar-toggler-icon {
+    background-color: #9b59b6;
+    padding: 5px 10px; /* Espaciado interior del icono */
+}
+
+
+
+/* Estilos de botones para Dark Mode */
+.btn-primary {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+    color: #fff;
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.btn-primary:hover {
+    background-color: #9b59b6; /* Morado pastel al pasar el mouse */
+    border-color: #9b59b6;
+}
+
+/* Estilos de tablas para Dark Mode */
+table {
+    background-color: #272a3d;
+    border-collapse: collapse; /* Borde colapsado para divisiones limpias */
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #37474f; /* Borde en gris oscuro */
+    padding: 10px; /* Espaciado interno */
+    text-align: left;
+    font-size: 14px; /* Tamaño de fuente para celdas de tabla */
+}
+
+th {
+    background-color: #4a90e2;
+    color: #fff; /* Texto en blanco */
+}
+
+/* Enlaces para Dark Mode */
+a {
+    color: #4a90e2;
+    text-decoration: none; /* Sin subrayado */
+    transition: color 0.3s; /* Transición suave del color del enlace */
+}
+
+a:hover {
+    color: #9b59b6; /* Morado pastel al pasar el mouse */
+}
+/* Estilos para el mensaje de "tabla vacía" */
+.empty-table-message {
+    background-color: #0f1016; /* Fondo ligeramente más oscuro */
+    /* Agrega otros estilos según sea necesario */
+}
+
+.empty-table-message p {
+    font-size: 16px;
+    color: #fff; /* Color del texto en el mensaje */
+}
+/* styles.css */
+.white-text {
+    color: white;
+  }
