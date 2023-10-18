@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
     <meta name="description" content="A sequence diagram editor." />
     <link rel="stylesheet" href="{{ asset('assets/style.css') }}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Copyright 1998-2023 by Northwoods Software Corporation. -->
-    <title>Sequence Diagram</title>
+    <title>Examen Parcial SW1</title>
 </head>
 
 <body>
@@ -38,8 +39,10 @@
                     class="list-reset list-none font-semibold flex justify-end flex-wrap sm:flex-nowrap items-center px-0 pb-0">
                     <li class="p-1 sm:p-0"><a class="topnav-link"
                             href="{{ route('diagramaSecuencia.index') }}">Volver</a></li>
-                    <li class="p-1 sm:p-0"><a class="topnav-link">Guardar</a></li>
-                    <li class="p-1 sm:p-0"><a class="topnav-link">Generar codigo</a></li>
+                    <li class="p-1 sm:p-0"><button onclick="generateCode('java')">Generar Código Java</button></li>
+                    <li class="p-1 sm:p-0"><button onclick="generateCode('python')">Generar Código Python</button></li>
+                    <li class="p-1 sm:p-0"><button onclick="generateCode('javascript')">Generar Código
+                            JavaScript</button></li>
                 </ul>
             </div>
         </div>
@@ -109,7 +112,8 @@
                                 }),
                                 $(go.TextBlock, {
                                         margin: 5,
-                                        font: "400 10pt Source Sans Pro, sans-serif"
+                                        font: "400 10pt Source Sans Pro, sans-serif",
+                                        editable: true,
                                     },
                                     new go.Binding("text", "text"))
                             ),
@@ -420,30 +424,105 @@
                 }
                 // end MessageDraggingTool
 
+                //GENERAR CODIGO 
+                function generateCode(language) {
+                    const diagramJson = myDiagram.model.toJson();
+
+                    // Envía una solicitud AJAX para generar el código en el lenguaje seleccionado
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ route('generar-codigo') }}", // Asegúrate de que la ruta sea la misma que en web.php
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            diagrama_json: diagramJson,
+                        },
+                        success: function(response) {
+                            // Maneja la respuesta según el lenguaje seleccionado
+                            if (language === 'java') {
+                                alert('Código Java generado:\n' + response.codigo_java);
+                            } else if (language === 'python') {
+                                alert('Código Python generado:\n' + response.codigo_python);
+                            } else if (language === 'javascript') {
+                                alert('Código JavaScript generado:\n' + response.codigo_javascript);
+                            }
+                        },
+                        error: function(error) {
+                            alert('Error al generar el código');
+                        }
+                    });
+                }
+
 
                 // Show the diagram's model in JSON format
-                //MOSTRAR EL DIAGRAMA
+                //GUARDAR EL DIAGRAMA EN LA BASE DE DATOS
+                var diagramId = {{ $diagramaId }};
+                console.log("diagramId: " + diagramId);
+                var diagramContent = {!! json_encode($contenidoDiagrama) !!}; // Asegura que el contenido sea tratado como JSON válido
+
                 function save() {
-                    document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+                    const diagramJson = myDiagram.model.toJson();
+                    console.log("diagramJson: " + diagramJson);
+                    // Utiliza AJAX (en este caso, con jQuery) para enviar el JSON al servidor
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ route('guardar-diagrama') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            diagrama_json: diagramJson,
+                            diagramaId: "{{ $diagramaId }}",
+                        },
+                        success: function(response) {
+                            alert('Diagrama guardado con éxito');
+                        },
+                        error: function(error) {
+                            alert('Error al guardar el diagrama');
+                        }
+                    });
                     myDiagram.isModified = false;
                 }
 
                 function load() {
-                    myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+                    myDiagram.model = go.Model.fromJson(diagramContent);
                 }
 
-                function loadFromServer() {
-                    // Realiza una solicitud AJAX para obtener los datos JSON del servidor
-                    fetch('URL_DEL_SERVIDOR') // Reemplaza 'URL_DEL_SERVIDOR' con la URL de tu punto final
-                        .then(response => response.json())
-                        .then(data => {
-                            // Carga los datos JSON en el diagrama
-                            myDiagram.model = go.Model.fromJson(data);
-                        })
-                        .catch(error => {
-                            console.error('Error al cargar datos desde el servidor:', error);
-                        });
+
+                function createObject() {
+                    // Creamos un nuevo objeto y su línea de vida
+                    const objKey = getNextObjectKey(); // Genera una clave única para el objeto
+                    const objLocation = "400 0"; // Establece la ubicación inicial del objeto
+                    const objDuration = 9; // Establece la duración de la línea de vida del objeto
+
+                    // Agregamos el objeto al modelo del diagrama
+                    myDiagram.model.addNodeData({
+                        key: objKey,
+                        text: objKey + ": Nuevo Objeto",
+                        isGroup: true,
+                        loc: objLocation,
+                        duration: objDuration,
+                    });
+
+                    // También agregamos su línea de vida
+                    myDiagram.model.addNodeData({
+                        group: objKey,
+                        start: 1, // Establece el tiempo inicial
+                        duration: objDuration, // Establece la duración de la línea de vida
+                    });
+
+                    // Ahora ajustamos las alturas de las líneas de vida si es necesario
+                    ensureLifelineHeights();
                 }
+
+                function getNextObjectKey() {
+                    // Esta función genera una clave única para cada nuevo objeto
+                    const nodes = myDiagram.model.nodeDataArray;
+                    let nextKey = 1;
+                    while (nodes.find(node => node.key === nextKey.toString())) {
+                        nextKey++;
+                    }
+                    return nextKey.toString();
+                }
+
+
                 window.addEventListener('DOMContentLoaded', init);
             </script>
 
@@ -452,34 +531,10 @@
 
                 <div>
                     <div>
-                        <button id="SaveButton" onclick="save()">Save</button>
-                        <button id="LoadButton" onclick="loadFromServer()">Cargar</button>
-                        <button onclick="load()">Load</button>
-                        Diagram Model saved in JSON format:
+                        <button onclick="save()">Guardar</button>
+                        <button onclick="createObject()">Crear objeto</button>
+                        <button onclick="load()">Cargar diagrama</button>
                     </div>
-                    <textarea id="mySavedModel" style="width:100%;height:240px">
-{ "class": "go.GraphLinksModel",
-  "nodeDataArray": [
-{"key":"Fred", "text":"Fred: Patron", "isGroup":true, "loc":"0 0", "duration":9},
-{"key":"Bob", "text":"Bob: Waiter", "isGroup":true, "loc":"100 0", "duration":9},
-{"key":"Hank", "text":"Hank: Cook", "isGroup":true, "loc":"200 0", "duration":9},
-{"key":"Renee", "text":"Renee: Cashier", "isGroup":true, "loc":"300 0", "duration":9},
-{"group":"Bob", "start":1, "duration":2},
-{"group":"Hank", "start":2, "duration":3},
-{"group":"Fred", "start":3, "duration":1},
-{"group":"Bob", "start":5, "duration":1},
-{"group":"Fred", "start":6, "duration":2},
-{"group":"Renee", "start":8, "duration":1}
- ],
-  "linkDataArray": [
-{"from":"Fred", "to":"Bob", "text":"order", "time":1},
-{"from":"Bob", "to":"Hank", "text":"order food", "time":2},
-{"from":"Bob", "to":"Fred", "text":"serve drinks", "time":3},
-{"from":"Hank", "to":"Bob", "text":"finish cooking", "time":5},
-{"from":"Bob", "to":"Fred", "text":"serve food", "time":6},
-{"from":"Fred", "to":"Renee", "text":"pay", "time":8}
- ]}
-    </textarea>
                 </div>
             </div>
         </div>
@@ -487,7 +542,5 @@
         <!--  End of GoJS sample code  -->
     </div>
 </body>
-<!--  This script is part of the gojs.net website, and is not needed to run the sample -->
-<script src="../assets/js/goSamples.js"></script>
 
 </html>

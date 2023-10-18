@@ -50,6 +50,21 @@ class DiagramaSecuenciaController extends Controller
         //return view('diagramaSecuencia.show', compact('diagrama'));
     }
 
+    public function mostrarDiagrama($id)
+    {
+        // Recupera el diagrama de la base de datos basado en el $id
+        $diagrama = DiagramaSecuencia::find($id);
+
+        if ($diagrama) {
+            $contenido = json_encode($diagrama->contenido); // Codifica a JSON
+            return view('diagrama.mostrar', compact('contenido'));
+        } else {
+            return redirect()->route('diagramaSecuencia.index')->with('error', 'Diagrama no encontrado.');
+        }
+    }
+
+
+
     public function invitar(Request $request)
     {
         // Validar los datos del formulario de invitación
@@ -81,12 +96,139 @@ class DiagramaSecuenciaController extends Controller
         return redirect()->route('diagrama-secuencia.index')->with('success', 'Diagrama de secuencia actualizado con éxito.');
     }
 
-    public function guardarDiagrama(Request $request, DiagramaSecuencia $diagrama)
+    public function guardarDiagrama(Request $request)
     {
-        $diagrama->contenido = $request->input('contenido');
+
+        $diagrama = DiagramaSecuencia::find($request->input('diagramaId'));
+
+        if (!$diagrama) {
+            return redirect()->route('diagrama-secuencia.index')->with('error', 'Diagrama no encontrado.');
+        }
+
+        // $request->validate([
+        //     'diagrama_json' => 'required|json', // Asegúrate de que el JSON sea válido
+        // ]);
+
+        // Actualiza el campo "contenido" en la base de datos para el diagrama con el ID dado
+        $json = $request->input('diagrama_json');
+        $diagrama->contenido = $json;
         $diagrama->save();
+
         return response()->json(['message' => 'Diagrama guardado con éxito']);
     }
+
+
+    //GENERAR CODIGO EN JAVA, PYTHON Y JAVASCRIPT
+
+    public function generarCodigo(Request $request)
+    {
+        $diagramaJson = $request->input('diagrama_json');
+
+        // Llama a las funciones de generación de código para los lenguajes respectivos
+        $codigoJava = $this->generarCodigoJavaDesdeJson($diagramaJson);
+        $codigoPython = $this->generarCodigoPythonDesdeJson($diagramaJson);
+        $codigoJavascript = $this->generarCodigoJavascriptDesdeJson($diagramaJson);
+
+        return response()->json([
+            'codigo_java' => $codigoJava,
+            'codigo_python' => $codigoPython,
+            'codigo_javascript' => $codigoJavascript,
+        ]);
+    }
+
+    function generarCodigoJavaDesdeJSON($diagramJson)
+    {
+        // Decodificar el JSON del diagrama en un array asociativo
+        $diagramData = json_decode($diagramJson, true);
+
+        // Inicializar el código Java
+        $codigoJava = "public class Main {\n";
+        $codigoJava .= "    public static void main(String[] args) {\n";
+
+        // Recorrer los objetos del diagrama
+        foreach ($diagramData['nodeDataArray'] as $objeto) {
+            if (!$objeto['isGroup']) {
+                // Agregar una clase Java para cada objeto en el diagrama
+                $codigoJava .= "        " . "class " . $objeto['text'] . " {\n";
+
+                // Recorrer las interacciones (mensajes)
+                foreach ($diagramData['linkDataArray'] as $mensaje) {
+                    if ($mensaje['from'] === $objeto['key']) {
+                        $codigoJava .= "            " . "void " . $mensaje['text'] . "() {\n";
+                        $codigoJava .= "                // Agregar lógica para la interacción aquí\n";
+                        $codigoJava .= "            }\n";
+                    }
+                }
+
+                $codigoJava .= "        " . "}\n";
+            }
+        }
+
+        $codigoJava .= "    }\n";
+        $codigoJava .= "}\n";
+
+        return $codigoJava;
+    }
+
+
+    public function generarCodigoPythonDesdeJSON(Request $request)
+    {
+        $diagramJson = $request->input('diagrama_json');
+
+        // Decodificar el JSON del diagrama en un array
+        $diagramData = json_decode($diagramJson, true);
+
+        $codigoPython = '';
+
+        // Recorrer los objetos del diagrama
+        foreach ($diagramData['nodeDataArray'] as $objeto) {
+            if (!$objeto['isGroup']) {
+                $codigoPython .= 'class ' . $objeto['text'] . ":\n";
+
+                // Recorrer las interacciones (mensajes)
+                foreach ($diagramData['linkDataArray'] as $mensaje) {
+                    if ($mensaje['from'] == $objeto['key']) {
+                        $codigoPython .= "    def " . $mensaje['text'] . "():\n";
+                        $codigoPython .= "        # Agregar lógica para la interacción aquí\n";
+                    }
+                }
+            }
+        }
+
+        return response()->json(['codigo_python' => $codigoPython]);
+    }
+
+
+    public function generarCodigoJavaScriptDesdeJSON(Request $request)
+    {
+        $diagramJson = $request->input('diagrama_json');
+
+        // Decodificar el JSON del diagrama en un array
+        $diagramData = json_decode($diagramJson, true);
+
+        $codigoJavaScript = '';
+
+        // Recorrer los objetos del diagrama
+        foreach ($diagramData['nodeDataArray'] as $objeto) {
+            if (!$objeto['isGroup']) {
+                $codigoJavaScript .= 'class ' . $objeto['text'] . " {\n";
+
+                // Recorrer las interacciones (mensajes)
+                foreach ($diagramData['linkDataArray'] as $mensaje) {
+                    if ($mensaje['from'] == $objeto['key']) {
+                        $codigoJavaScript .= "    " . $mensaje['text'] . "() {\n";
+                        $codigoJavaScript .= "        // Agregar lógica para la interacción aquí\n";
+                        $codigoJavaScript .= "    }\n";
+                    }
+                }
+
+                $codigoJavaScript .= "}\n";
+            }
+        }
+
+        return response()->json(['codigo_javascript' => $codigoJavaScript]);
+    }
+
 
     public function destroy(DiagramaSecuencia $diagramaSecuencia)
     {

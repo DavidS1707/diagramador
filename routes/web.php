@@ -36,16 +36,20 @@ Route::get('/diagrama/{nombre}', function ($nombre) {
         abort(404);
     }
 
-    // return view('livewire.diagrama-component', [
-    //     'diagrama' => $diagrama,
-    // ]);
-    return view('diagramaSecuencia.edit');
+    return view('diagramaSecuencia.edit', [
+        'contenidoDiagrama' => $diagrama->contenido,
+        'diagramaId' => $diagrama->id,
+    ]);
 })->name('diagrama/editar');
 
 
+//Ruta para guardar el diagrama en la base de datos
+Route::post('/guardar-diagrama/', [DiagramaSecuenciaController::class, 'guardarDiagrama'])->name('guardar-diagrama');
+Route::post('/generar-codigo', [DiagramaSecuenciaController::class, 'generarCodigo'])->name('generar-codigo');
+
 //Ruta controlador de los diagramas de secuencia
 Route::resource('/diagramas', DiagramaSecuenciaController::class);
-Route::post('/guardar-diagrama/{diagrama}', 'DiagramaSecuenciaController@guardarDiagrama')->name('guardar-diagrama');
+// Route::post('/guardar-diagrama/{diagrama}', 'DiagramaSecuenciaController@guardarDiagrama')->name('guardar-diagrama');
 
 //Rutas para la autenticacion
 Auth::routes();

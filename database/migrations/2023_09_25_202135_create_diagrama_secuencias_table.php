@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre')->unique();
             $table->text('descripcion')->nullable();
-            $table->text('contenido');
+            $table->json('contenido');
             $table->unsignedBigInteger('user_id'); // Agregar clave foránea
             $table->timestamps();
 
