@@ -531,7 +531,7 @@
                     <div>
                         <button onclick="save()">Guardar</button>
                         <button onclick="createObject()">Crear objeto</button>
-                        <button onclick="load()">Cargar diagrama</button>
+                        {{-- <button onclick="load()">Cargar diagrama</button> --}}
                     </div>
                 </div>
             </div>
