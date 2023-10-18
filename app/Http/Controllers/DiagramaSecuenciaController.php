@@ -122,6 +122,7 @@ class DiagramaSecuenciaController extends Controller
 
     public function generarCodigo(Request $request)
     {
+        dd("hola");
         $diagramaJson = $request->input('diagrama_json');
 
         // Llama a las funciones de generación de código para los lenguajes respectivos
@@ -136,7 +137,7 @@ class DiagramaSecuenciaController extends Controller
         ]);
     }
 
-    function generarCodigoJavaDesdeJSON($diagramJson)
+    public function generarCodigoJavaDesdeJSON($diagramJson)
     {
         // Decodificar el JSON del diagrama en un array asociativo
         $diagramData = json_decode($diagramJson, true);

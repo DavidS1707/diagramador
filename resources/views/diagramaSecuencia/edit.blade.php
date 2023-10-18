@@ -39,10 +39,10 @@
                     class="list-reset list-none font-semibold flex justify-end flex-wrap sm:flex-nowrap items-center px-0 pb-0">
                     <li class="p-1 sm:p-0"><a class="topnav-link"
                             href="{{ route('diagramaSecuencia.index') }}">Volver</a></li>
-                    <li class="p-1 sm:p-0"><button onclick="generateCode('java')">Generar Código Java</button></li>
-                    <li class="p-1 sm:p-0"><button onclick="generateCode('python')">Generar Código Python</button></li>
+                    <li class="p-1 sm:p-0"><button onclick="generateCode()">Generar Código</button></li>
+                    {{-- <li class="p-1 sm:p-0"><button onclick="generateCode('python')">Generar Código Python</button></li>
                     <li class="p-1 sm:p-0"><button onclick="generateCode('javascript')">Generar Código
-                            JavaScript</button></li>
+                            JavaScript</button></li> --}}
                 </ul>
             </div>
         </div>
@@ -425,38 +425,36 @@
                 // end MessageDraggingTool
 
                 //GENERAR CODIGO 
-                function generateCode(language) {
+                function generateCode() {
                     const diagramJson = myDiagram.model.toJson();
 
-                    // Envía una solicitud AJAX para generar el código en el lenguaje seleccionado
+                    // Envía una solicitud AJAX para generar los códigos en los tres lenguajes
                     $.ajax({
                         type: 'POST',
-                        url: "{{ route('generar-codigo') }}", // Asegúrate de que la ruta sea la misma que en web.php
+                        url: "{{ route('generarcodigo') }}", // Asegúrate de que la ruta sea la misma que en web.php
                         data: {
                             _token: "{{ csrf_token() }}",
                             diagrama_json: diagramJson,
                         },
                         success: function(response) {
-                            // Maneja la respuesta según el lenguaje seleccionado
-                            if (language === 'java') {
-                                alert('Código Java generado:\n' + response.codigo_java);
-                            } else if (language === 'python') {
-                                alert('Código Python generado:\n' + response.codigo_python);
-                            } else if (language === 'javascript') {
-                                alert('Código JavaScript generado:\n' + response.codigo_javascript);
-                            }
+                            // Maneja la respuesta que contiene los códigos en los tres lenguajes
+                            alert('Código Java generado:\n' + response.codigo_java);
+                            alert('Código Python generado:\n' + response.codigo_python);
+                            alert('Código JavaScript generado:\n' + response.codigo_javascript);
                         },
                         error: function(error) {
-                            alert('Error al generar el código');
+                            console.log(error)
+                            alert('Error al generar los códigos');
                         }
                     });
                 }
 
 
+
                 // Show the diagram's model in JSON format
                 //GUARDAR EL DIAGRAMA EN LA BASE DE DATOS
                 var diagramId = {{ $diagramaId }};
-                console.log("diagramId: " + diagramId);
+                // console.log("diagramId: " + diagramId);
                 var diagramContent = {!! json_encode($contenidoDiagrama) !!}; // Asegura que el contenido sea tratado como JSON válido
 
                 function save() {

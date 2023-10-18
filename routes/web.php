@@ -45,7 +45,7 @@ Route::get('/diagrama/{nombre}', function ($nombre) {
 
 //Ruta para guardar el diagrama en la base de datos
 Route::post('/guardar-diagrama/', [DiagramaSecuenciaController::class, 'guardarDiagrama'])->name('guardar-diagrama');
-Route::post('/generar-codigo', [DiagramaSecuenciaController::class, 'generarCodigo'])->name('generar-codigo');
+Route::post('/generarcodigo', [DiagramaSecuenciaController::class, 'generarCodigo'])->name('generarcodigo');
 
 //Ruta controlador de los diagramas de secuencia
 Route::resource('/diagramas', DiagramaSecuenciaController::class);
