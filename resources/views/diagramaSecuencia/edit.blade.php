@@ -38,8 +38,8 @@
                     class="list-reset list-none font-semibold flex justify-end flex-wrap sm:flex-nowrap items-center px-0 pb-0">
                     <li class="p-1 sm:p-0"><a class="topnav-link"
                             href="{{ route('diagramaSecuencia.index') }}">Volver</a></li>
-                    <li class="p-1 sm:p-0"><a class="topnav-link" href="../samples/">Guardar</a></li>
-                    <li class="p-1 sm:p-0"><a class="topnav-link" href="../intro/">Generar codigo</a></li>
+                    <li class="p-1 sm:p-0"><a class="topnav-link">Guardar</a></li>
+                    <li class="p-1 sm:p-0"><a class="topnav-link">Generar codigo</a></li>
                 </ul>
             </div>
         </div>
