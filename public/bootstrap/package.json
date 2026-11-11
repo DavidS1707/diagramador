@@ -104,7 +104,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.22.15",
-    "@babel/core": "^7.22.17",
+    "@babel/core": "^8.1.0",
     "@babel/preset-env": "^7.22.15",
     "@popperjs/core": "^2.11.8",
     "@rollup/plugin-babel": "^6.0.3",
@@ -142,7 +142,7 @@
     "npm-run-all2": "^6.0.6",
     "postcss": "^8.4.29",
     "postcss-cli": "^10.1.0",
-    "rollup": "^3.29.1",
+    "rollup": "^4.68.2",
     "rollup-plugin-istanbul": "^4.0.0",
     "rtlcss": "^4.1.0",
     "sass": "^1.66.1",
@@ -151,7 +151,7 @@
     "stylelint": "^15.10.3",
     "stylelint-config-twbs-bootstrap": "^11.0.1",
     "terser": "^5.19.4",
-    "vnu-jar": "23.4.11"
+    "vnu-jar": "26.11.9"
   },
   "files": [
     "dist/{css,js}/*.{css,js,map}",
